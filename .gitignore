@@ -1,0 +1,6 @@
+.DS_Store
+*.jsonl
+*.hprof
+*.env
+*.json
+id_photos/
