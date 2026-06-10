@@ -1,6 +1,6 @@
 # Because I Got High
 
-![we're fucked](analytics.png)
+![we're fucked](because-i-got-high.png)
 
 ## How a cannabis club management platform left 1,082,680 medical records, 985,841 passport scans, and the private messages of every member it ever served on a server with no authentication
 
