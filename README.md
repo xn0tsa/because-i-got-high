@@ -262,9 +262,7 @@ The country figures matter less than the nationality figures. The database recor
 | Argentine | 12,151 |
 | Swiss | 12,094 |
 
-The numbers the DPAs saw in the initial notifications based on country of residence dramatically undercounted the actual exposure. There are not 6,008 French nationals in this database. There are **104,865**. Not 6,063 British nationals **50,113**. Not 7,728 Italians **130,623**.
 
-The gap exists for two reasons. First, clubs in Barcelona and Madrid attract members from across Europe a French national living in Barcelona shows up as "Spain" in the country field but "French" in the nationality field. Second, and more importantly: the platform runs clubs on multiple continents. The 89,389 South African nationals are largely members of clubs physically based in Cape Town, Johannesburg and Pretoria they didn't travel to Spain, they joined a club down the road that happened to run on this backend. Same for the 50,113 British nationals and the 12,468 Irish nationals, many of whom are members of clubs operating in the UK and Ireland.
 
 **The minors.** The database contains **721 members recorded as under 18**. Cannabis social clubs are legally required to restrict membership to adults. These records suggest either fraudulent registrations or a verification failure. Either way: 721 people classified as minors, marked as medicinal cannabis users, with identity documents on a public server.
 
