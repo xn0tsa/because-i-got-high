@@ -78,7 +78,7 @@ public static final String SECRET_KEY = "[REDACTED]";
 
 That's a Stripe secret key. It was hardcoded in the app. Anyone who decompiled it had it. It took twenty minutes. The app was my entry point but the damage I found wasn't in the app. It was in the server that every member, app or no app, was already exposed to.
 
-Two hours later I had confirmed an unauthenticated IDOR on the member profile API. The `user_id` parameter was a sequential integer. There was no authentication token, no session cookie, no API key. I sent the request with my own user ID, then with a neighboring integer. Both returned full member profiles. I wrote a loop.
+Two hours later I had confirmed an unauthenticated IDOR on the member profile API. The `user_id` parameter was a sequential integer. There was no authentication token, no session cookie, no API key. I sent the request with my own user ID, then with a neighboring integer. Both returned full member profiles. I wrote a count loop.
 
 I ran it overnight. By the following morning I had 1,082,680 records.
 
