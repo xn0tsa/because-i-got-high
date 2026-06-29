@@ -150,7 +150,7 @@ Notice the last field before `photo`. Every profile returns `usage_type: Medicin
 | Phone number | **405,857** |
 | Home address | **196,132** |
 
-The consumption amounts are specific. A member record contains fields like `consumption: 30 g.` their declared monthly cannabis intake alongside their full identity and medical classification. Their product preference history, stored as `prefs1`, names the specific strains they consume with quantities: `AMNESIA HAZE (1g)`, `RAINBOW CHIP (2g)`, `OG KUSH (3g)`.
+The consumption field contains a self-declared estimated monthly value entered at registration — not a verified log of actual consumption events. CCS Nube's lawyers correctly pointed out that presenting it as a "consumption history" overstates what the field represents. A member who wrote "30g" when they signed up may smoke more, less, or nothing. The field is still personal data. It was still exposed without authentication. It just isn't a surveillance log.
 
 This is not a generic PII database. It is a detailed medical and consumption profile attached to a real, verified, photographed human identity, with no authentication required to read it.
 
@@ -278,19 +278,27 @@ For a Saudi, Kuwaiti or Emirati national, a passport photograph sitting at a pre
 
 ## The Medical Classification
 
-**1,020,457 of the 1,082,680 members** in the database carry the field `usage_type: Medicinal`.
+*(Updated June 29, 2026 — see also [LEGAL.md](LEGAL.md))*
 
-This is not cosmetic. It is the legal fiction that makes the CSC model defensible: members consume cannabis for personal, therapeutic reasons, not commercial sale. The clubs classify their members this way because it supports their legal position. Some members may have genuine medical reasons. Over a million of them are recorded as medical users and that classification was stored alongside their name, home address, passport number, and photograph, with no authentication required to retrieve it.
+The API returned `usage: Medicinal` for approximately 94% of member records. CCS Nube's subsequent investigation identified this as a PHP logic error in `userProfile.php`:
 
-GDPR Article 9(1) lists the categories of personal data subject to heightened protection. The relevant clause:
+```php
+if (isset($userdata['usageType']) == 1) {
+    $usageType = 'Medicinal';
+} else {
+    $usageType = 'Recreational';
+}
+```
 
-> *"data concerning health"*
+`isset()` returns a boolean. `true == 1` is always true in PHP whenever the field exists. The actual proportion of members with a stored medicinal classification is approximately 12%, not 94%. The report previously stated 94% — that figure reflected what the API transmitted, not what the database stored. It has been corrected.
 
-A record that contains: a person's name, their home address, their passport number, their photograph, and a field stating they are a medicinal cannabis user, is a health record under European law. Processing it requires explicit consent under Article 9(2)(a), or one of the other narrow exceptions. Breaching it triggers Article 83(5) penalties, not Article 83(4).
+CCS Nube's lawyers have since demanded that the GDPR Article 9 framing be removed entirely on this basis. They are welcome to try that argument in court.
 
-The maximum fine under Article 83(5) is €20,000,000 or 4% of total worldwide annual turnover whichever is higher.
+The CJEU ruled in *C-21/23 (Lindenapotheke, October 2024)* that the Article 9 prohibition *"is independent of whether or not the information revealed by the processing operation in question is correct and of whether the data controller is acting with the aim of obtaining information that falls within one of the special categories."* A bug is not an exemption. The API transmitted a health-revealing classification to an external party with no authentication. That transmission is processing under Article 4(2) GDPR regardless of what caused it.
 
-This is not a data breach. It is a health data breach. The difference is €20 million.
+So: the 94% figure was wrong. The Article 9 characterisation of what was disclosed at the API layer was not.
+
+The maximum fine under Article 83(5) is €20,000,000 or 4% of total worldwide annual turnover — whichever is higher. That math doesn't change with the PHP bug explanation.
 
 ---
 
