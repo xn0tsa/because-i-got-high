@@ -1,6 +1,6 @@
 ![we're fucked](because-i-got-high.png)
 
-## How a cannabis club management platform left 1,082,680 medical records, 985,841 passport scans (including mine), and the private messages of every member it ever served on a server with no authentication
+## How a cannabis club management platform left 1,082,680 member records, 985,841 passport scans (including mine), and the private messages of every member it ever served on a server with no authentication
 
 **Report Date:** June 10, 2026  
 **Researcher:** Sammy Azdoufal  
@@ -18,11 +18,11 @@ The platform also records something else. In the member profile database, every 
 usage_type: Medicinal
 ```
 
-**1,020,457 members** 94% of the total are classified by the software as **medicinal cannabis users**. Whether they used the PuffPal app or not. Whether they had ever heard of PuffPal or not.
+The API returned `usage: Medicinal` for **1,020,457 members** — later found to be a PHP bug affecting ~94% of records regardless of actual stored value. See [The Medical Classification](#the-medical-classification) and [LEGAL.md](LEGAL.md) for the full explanation.
 
 Under GDPR Article 9, health data is the most protected category of personal information. It cannot be processed without explicit consent and adequate safeguards. A breach of health data triggers the highest tier of regulatory penalties up to **€20 million or 4% of global annual turnover**. The standard notification obligations under Article 33 apply within 72 hours of discovery.
 
-The irony is architectural. The clubs collect all this information, apply a medical classification to every member, store that classification alongside passport scans and home addresses and then left all of it accessible via an unauthenticated HTTP endpoint that accepted any integer from 1 to however many members the club had.
+The irony is architectural. The clubs collect all this information, return a medical classification field alongside passport scans and home addresses and then left all of it accessible via an unauthenticated HTTP endpoint that accepted any integer from 1 to however many members the club had.
 
 The physical bouncer at the door checks your member card. The digital one wasn't there.
 
@@ -32,7 +32,7 @@ The physical bouncer at the door checks your member card. The digital one wasn't
 
 | Category | Count |
 |---|---|
-| Total member profiles (health records) | **1,082,680** |
+| Total member profiles | **1,082,680** |
 | With passport or national ID number | **923,543** |
 | With monthly consumption amount recorded | **1,077,294** |
 | With strain preferences on file | **434,000+** |
@@ -136,7 +136,7 @@ The `user_id` parameter is a sequential integer starting at 1, scoped per club. 
 }
 ```
 
-Notice the last field before `photo`. Every profile returns `usage_type: Medicinal`. That field is not incidental it is recorded, stored, and returned as part of every member record the platform holds. It is a medical classification, attached to a name, a passport number, a home address, and a photograph of a government-issued identity document.
+Notice the last field before `photo`. Every profile returns `usage_type: Medicinal`. That field is not incidental it is recorded, stored, and returned as part of every member record the platform holds. It is a health-revealing field, attached to a name, a passport number, a home address, and a photograph of a government-issued identity document.
 
 **Extracted across 377 clubs:**
 
@@ -152,7 +152,7 @@ Notice the last field before `photo`. Every profile returns `usage_type: Medicin
 
 The consumption field contains a self-declared estimated monthly value entered at registration — not a verified log of actual consumption events. CCS Nube's lawyers correctly pointed out that presenting it as a "consumption history" overstates what the field represents. A member who wrote "30g" when they signed up may smoke more, less, or nothing. The field is still personal data. It was still exposed without authentication. It just isn't a surveillance log.
 
-This is not a generic PII database. It is a detailed medical and consumption profile attached to a real, verified, photographed human identity, with no authentication required to read it.
+This is not a generic PII database. It is a detailed personal and consumption profile attached to a real, verified, photographed human identity, with no authentication required to read it.
 
 ---
 
@@ -262,11 +262,11 @@ The country figures matter less than the nationality figures. The database recor
 
 
 
-**The minors.** The database contains **721 members recorded as under 18**. Cannabis social clubs are legally required to restrict membership to adults. These records suggest either fraudulent registrations or a verification failure. Either way: 721 people classified as minors, marked as medicinal cannabis users, with identity documents on a public server.
+**The minors.** The database contains **721 members recorded as under 18**. Cannabis social clubs are legally required to restrict membership to adults. These records suggest either fraudulent registrations or a verification failure. Either way: 721 people classified as minors, with identity documents on a public server.
 
 **The high-risk nationalities.** Beyond Europe, the database contains nationals of countries where cannabis possession is a serious criminal offence:
 
-**Saudi Arabia** Cannabis possession carries imprisonment, fines, and flogging. Trafficking carries the death penalty. Saudi nationals in this database: documented, photographed, and classified as medicinal cannabis users.
+**Saudi Arabia** Cannabis possession carries imprisonment, fines, and flogging. Trafficking carries the death penalty. Saudi nationals in this database: documented, photographed, .
 
 **Kuwait** Up to 5 years in prison under Law No. 74 of 1983. Kuwaiti nationals: documented, photographed, classified.
 
@@ -328,7 +328,7 @@ As the reporting researcher and an affected data subject, formal Art. 77 complai
 
 CCS Nube's failure to file within the statutory window is itself a separate GDPR violation, independently actionable by each authority.
 
-**The clubs are exposed too.** Each cannabis social club that used CCS Nube's platform is a data controller under GDPR. They delegated the processing of their members' health data to CCS Nube. That delegation does not transfer their liability under Article 28, a controller remains fully responsible for the guarantees provided by their processors. The clubs' members were not notified. The clubs themselves may not have been notified. As of the date of this publication, 1,082,680 people whose medical records were on a public server are still waiting.
+**The clubs are exposed too.** Each cannabis social club that used CCS Nube's platform is a data controller under GDPR. They delegated the processing of their members' personal data to CCS Nube. That delegation does not transfer their liability under Article 28, a controller remains fully responsible for the guarantees provided by their processors. The clubs' members were not notified. The clubs themselves may not have been notified. As of the date of this publication, 1,082,680 people whose personal data was on a public server are still waiting.
 
 **If you are a lawyer representing affected members**, or an NGO working in the harm-reduction or cannabis legalization space, contact crowniezy@proton.me. The documented evidence API logs, extracted dataset scope, email timeline is available for regulatory and legal proceedings.
 
@@ -385,7 +385,7 @@ If you are a member of a cannabis social club whose backend runs on CCS Nube the
 
 **Your ID document scan was on a public URL** with no token, no expiry, and no authentication. If you submitted a passport or national ID during registration at a counter, via a web form, or through club staff that photograph was accessible to anyone with your club name and user ID.
 
-**Your medical classification was in the database.** You are recorded as a medicinal cannabis user. That record was exposed alongside your identity.
+**Your usage classification was in the database.** The API returned a medicinal cannabis user classification alongside your identity (see [The Medical Classification](#the-medical-classification) for context on the PHP bug).
 
 **Your private messages were accessible cross-account.** Conversations between you and other members or club staff were readable without owning the account that sent or received them.
 
